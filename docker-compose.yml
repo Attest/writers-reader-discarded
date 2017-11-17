@@ -1,0 +1,37 @@
+version: '3.3'
+
+services:
+  client:
+    container_name: client
+    build:
+      context: ./client
+      dockerfile: ./Dockerfile
+    networks:
+      - default
+  server:
+    container_name: server
+    build:
+      context: ./server
+      dockerfile: ./Dockerfile
+    ports:
+      - 8000:8000
+    networks:
+      - default
+  linkerd:
+    container_name: linkerd
+    image: buoyantio/linkerd:1.2.1
+    ports:
+      - 9990:9990
+      - 4041:4041
+      - 4140:4140
+      - 4141:4141
+    networks:
+      - default
+    volumes:
+      - ./linkerd.yml:/io/buoyant/linkerd/config.yml:ro
+      - ./disco:/disco
+    command:
+      - "/io/buoyant/linkerd/config.yml"
+networks:
+  default:
+    external: false

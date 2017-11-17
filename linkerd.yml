@@ -1,0 +1,43 @@
+admin:
+  ip: 0.0.0.0
+  port: 9990
+
+namers:
+- kind: io.l5d.fs
+  rootDir: /disco
+
+routers:
+- protocol: http
+  label: http-internal-incoming
+  dstPrefix: /in
+  servers:
+  - ip: 0.0.0.0
+    port: 4041
+  identifier:
+    kind: io.l5d.header
+    header: l5d-dst-service
+  interpreter:
+    kind: default
+    transformers:
+    - kind: io.l5d.specificHost
+      host: 10.64.2.206
+  dtab: |
+    /in/out  => /#/io.l5d.fs;
+
+- protocol: http
+  label: http-internal-outgoing
+  dstPrefix: /out
+  servers:
+  - ip: 0.0.0.0
+    port: 4141
+  identifier:
+    kind: io.l5d.path
+    segments: 1
+    consume: true
+  interpreter:
+    kind: default
+    transformers:
+    - kind: io.l5d.port
+      port: 4041
+  dtab: |
+    /out     => /#/io.l5d.fs;

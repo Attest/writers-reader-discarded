@@ -1,0 +1,30 @@
+group 'writersreaderdiscarded'
+version '0.1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+jar.archiveName 'writersreaderdiscarded.jar'
+
+repositories {
+  mavenCentral()
+}
+
+dependencies {
+  compile(
+      "org.slf4j:slf4j-api:1.7.25",
+      "ch.qos.logback:logback-classic:1.2.3",
+      "org.glassfish.jersey.core:jersey-client:2.26",
+      "org.glassfish.jersey.connectors:jersey-apache-connector:2.26",
+      "org.glassfish.jersey.inject:jersey-hk2:2.26"
+  )
+}
+
+jar {
+  manifest {
+    attributes 'Main-Class': 'writersreaderdiscarded.Application'
+  }
+
+  from {
+    configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+  }
+}
